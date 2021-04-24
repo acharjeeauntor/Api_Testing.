@@ -6,9 +6,6 @@ This repo contains Dummy Customer Api Testing with generate a report using newma
 ### To install packages:
 npm i
 
-### To run newman:
-npx newman run .\collection\customer_api_collection.json -e .\collection\customer_api_env.json
-
 ### To generate report:
 npm test
 
