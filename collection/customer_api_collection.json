@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "a0c3a998-9bdc-4b5e-a592-fcbf52154c6d",
-		"name": "Dummy Customer Api Test",
+		"_postman_id": "5fdace13-d2a7-4cb4-bf64-55697dbd5b2e",
+		"name": "Customer API Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -13,8 +13,13 @@
 					"script": {
 						"exec": [
 							"var jsonData = pm.response.json();\r",
-							"let token = jsonData.token\r",
-							"pm.environment.set(\"token\", token);"
+							"let token = jsonData.token;\r",
+							"pm.environment.set(\"token\", token);\r",
+							"\r",
+							"pm.test(`Verify Status code`, () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -25,7 +30,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"salman\",\r\n    \"password\": \"salman1234\"\r\n}",
+					"raw": "{\r\n    \"username\":\"salman\",\r\n    \"password\":\"salman1234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,16 +53,21 @@
 			"response": []
 		},
 		{
-			"name": "Customer List",
+			"name": "Customer list",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"check customer list\", function () {\r",
+							"pm.test(\"Checking customer list\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    let id = jsonData.Customers[0].id\r",
+							"    let arrLength =jsonData.Customers.length\r",
+							"    let id = jsonData.Customers[0].id;\r",
+							"    let last_customer_id = jsonData.Customers[arrLength-1].id\r",
+							"    pm.environment.set(\"first_customer\", id);\r",
+							"    pm.environment.set(\"last_customer\", last_customer_id);\r",
 							"    pm.expect(id).to.eql(101);\r",
+							"\r",
 							"});\r",
 							"\r",
 							"pm.test(\"Status code is 200\", function () {\r",
@@ -68,13 +78,7 @@
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
 				"method": "GET",
 				"header": [
 					{
@@ -99,16 +103,18 @@
 			"response": []
 		},
 		{
-			"name": "Get Customer Info",
+			"name": "Get customer info",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Get Customer Info\", function () {\r",
+							"pm.test(\"Checking customer info\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    let name= jsonData.name\r",
-							"    pm.expect(name).to.eql(\"Mr. Rahim\");\r",
+							"    let id = jsonData.id;\r",
+							"    let first_customer =pm.environment.get(\"first_customer\");\r",
+							"     pm.response.to.have.status(200);\r",
+							"    pm.expect(id).to.eql(first_customer);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -125,7 +131,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/customer/api/v1/get/103",
+					"raw": "{{baseUrl}}/customer/api/v1/get/{{first_customer}}",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -134,27 +140,26 @@
 						"api",
 						"v1",
 						"get",
-						"103"
+						"{{first_customer}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Add New Customer",
+			"name": "Create new customer",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Message Success\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    let message = jsonData.message\r",
-							"    pm.expect(message).to.eql(\"Success\");\r",
-							"});\r",
-							"\r",
 							"pm.test(\"Status code is 201\", function () {\r",
 							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Verify Success Message\", function () {\r",
+							"    var jsonData = pm.response.json()\r",
+							"    let msg = jsonData.message\r",
+							"    pm.expect(msg).contains(\"Success\")\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -176,7 +181,7 @@
 							"    let {name} = res.json()\r",
 							"    let {phone_w}=res.json()\r",
 							"    let {email_u} = res.json()\r",
-							"    let email=email_u+'@gmail.com'\r",
+							"    let email=email_u+'@testmail.com'\r",
 							"    \r",
 							"    pm.environment.set(\"name\", name);\r",
 							"    pm.environment.set(\"email\", email);\r",
@@ -199,7 +204,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": {{id}},\r\n    \"name\": \"{{name}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"address\": \"Tangail\",\r\n    \"phone_number\": \"{{phone_number}}\"\r\n}",
+					"raw": "{\r\n    \"id\":{{id}},\r\n    \"name\":\"{{name}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"address\":\"Gulshan, Dhaka\",\r\n    \"phone_number\":\"{{phone_number}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -222,7 +227,7 @@
 			"response": []
 		},
 		{
-			"name": "Existing Customer",
+			"name": "Existing customer create",
 			"event": [
 				{
 					"listen": "test",
@@ -230,16 +235,13 @@
 						"exec": [
 							"pm.test(\"Status code is 208\", function () {\r",
 							"    pm.response.to.have.status(208);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify Error Message\", function () {\r",
+							"    var jsonData = pm.response.json()\r",
+							"    let msg = jsonData.error.message\r",
+							"    pm.expect(msg).contains(\"Customer already exists\")\r",
 							"});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
 						],
 						"type": "text/javascript"
 					}
@@ -256,7 +258,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 101,\r\n    \"name\": \"Mr. Kamal\",\r\n    \"email\": \"mrkamal@test.com\",\r\n    \"address\": \"Gulshan,Dhaka\",\r\n    \"phone_number\": \"01502020110\"\r\n}",
+					"raw": "{\r\n    \"id\":101,\r\n    \"name\":\"Mr. Kamal\",\r\n    \"email\":\"kamal@test.com\",\r\n    \"address\":\"Gulshan, Dhaka\",\r\n    \"phone_number\":\"01502201154\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -279,21 +281,19 @@
 			"response": []
 		},
 		{
-			"name": "Update a Customer",
+			"name": "Update customer",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
+						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"Check update customer\", function () {\r",
+							"pm.test(\"Update customer\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Success\");\r",
+							"    pm.expect(jsonData.message).contains(\"Success\");\r",
 							"});\r",
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});"
-						],
-						"type": "text/javascript"
+							""
+						]
 					}
 				}
 			],
@@ -308,7 +308,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": {{id}},\r\n    \"name\": \"auntor\",\r\n    \"email\": \"acharjeeontu2gmail.com\",\r\n    \"address\": \"Tangail\",\r\n    \"phone_number\": \"01725852363\"\r\n}",
+					"raw": "{\r\n    \"id\":{{id}},\r\n    \"name\":\"Rahim Uddin\",\r\n    \"email\":\"rahim@test.com\",\r\n    \"address\":\"Gulshan, Dhaka\",\r\n    \"phone_number\":\"01502212471\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -332,18 +332,19 @@
 			"response": []
 		},
 		{
-			"name": "Delete a Customer",
+			"name": "Delete customer",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
+						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"Delete a Customer\", function () {\r",
+							"pm.test(\"Delete customer\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Customer deleted!\");\r",
-							"});"
-						],
-						"type": "text/javascript"
+							"    pm.expect(jsonData.message).contains(\"Customer deleted!\");\r",
+							"});\r",
+							""
+						]
 					}
 				}
 			],
@@ -367,27 +368,22 @@
 						"v1",
 						"delete",
 						"{{id}}"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": null,
-							"disabled": true
-						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete a Existing Customer",
+			"name": "Delete existing customer",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 404\", function () {\r",
-							"    pm.response.to.have.status(404);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).contains(\"Customer deleted!\");\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -404,7 +400,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/customer/api/v1/delete/{{id}}",
+					"raw": "{{baseUrl}}/customer/api/v1/delete/{{last_customer}}",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -413,18 +409,38 @@
 						"api",
 						"v1",
 						"delete",
-						"{{id}}"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": null,
-							"disabled": true
-						}
+						"{{last_customer}}"
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://customer-test-api.herokuapp.com",
+			"type": "string"
 		}
 	]
 }

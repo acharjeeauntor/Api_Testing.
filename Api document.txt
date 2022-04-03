@@ -25,7 +25,7 @@ Method: GET
 header:{
 Authorization:token 
 }
-https://customer-test-api.herokuapp.com/customer/api/v1/get/103
+https://customer-test-api.herokuapp.com/customer/api/v1/get/{{first_customer}}
 Test Case: Verfity Customer name of customer id 103 is Mr. Rahim
 
 ========================
@@ -98,7 +98,7 @@ header:{
 Authorization:token 
 }
 https://customer-test-api.herokuapp.com/customer/api/v1/delete/{{id}}
-Test Case: Verfity response status code is 404
+Test Case: Verfity response status code is 200
 
 
 

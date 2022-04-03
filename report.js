@@ -1,10 +1,10 @@
 const newman = require('newman');
 
 newman.run({
-    collection: require('./collection/customer_collection.json'), // pointing to local JSON file.
-    environment: require('./collection/customer_environment.json'), // pointing to local env file
+    collection: require('./collection/customer_api_collection.json'), // pointing to local JSON file.
+    environment: require('./collection/customer_api_env.json'), // pointing to local env file
     iterationCount: 1,
-    reporters: 'htmlextra',
+    reporters: ['cli','htmlextra'],
     reporter: {
         htmlextra: {
             export: './Reports/report.html', // If not specified, the file will be written to `newman/` in the current working directory.
@@ -13,5 +13,5 @@ newman.run({
 
 }, function (err) {
     if (err) { throw err; }
-    console.log('collection run complete!');
+    console.log('Collection run complete!');
 });
