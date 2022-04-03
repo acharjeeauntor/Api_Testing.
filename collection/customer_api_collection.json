@@ -286,14 +286,14 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Update customer\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData.message).contains(\"Success\");\r",
 							"});\r",
 							""
-						]
+						],
+						"type": "text/javascript"
 					}
 				}
 			],
@@ -380,10 +380,10 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
+							"pm.test(\"Status code is 404\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).contains(\"Customer deleted!\");\r",
-							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(jsonData.error.message).contains(\"Customer not found\");\r",
+							"    pm.response.to.have.status(404);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -400,7 +400,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/customer/api/v1/delete/{{last_customer}}",
+					"raw": "{{baseUrl}}/customer/api/v1/delete/{{id}}",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -409,7 +409,7 @@
 						"api",
 						"v1",
 						"delete",
-						"{{last_customer}}"
+						"{{id}}"
 					]
 				}
 			},
