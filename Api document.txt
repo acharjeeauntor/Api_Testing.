@@ -98,7 +98,7 @@ header:{
 Authorization:token 
 }
 https://customer-test-api.herokuapp.com/customer/api/v1/delete/{{id}}
-Test Case: Verfity response status code is 200
+Test Case: Verfity response status code is 404
 
 
 
